@@ -21,6 +21,7 @@
 #include <aasdk/USB/USBHub.hpp>
 #include <aasdk/USB/AccessoryModeQueryChain.hpp>
 #include <aasdk/Error/Error.hpp>
+#include <aasdk/Common/Log.hpp>
 
 
 namespace aasdk
@@ -37,9 +38,11 @@ USBHub::USBHub(IUSBWrapper& usbWrapper, boost::asio::io_service& ioService, IAcc
 
 void USBHub::start(Promise::Pointer promise)
 {
+    LOG(debug);
     strand_.dispatch([this, self = this->shared_from_this(), promise = std::move(promise)]() {
         if(hotplugPromise_ != nullptr)
         {
+            LOG(error) << "Operation aborted";
             hotplugPromise_->reject(error::Error(error::ErrorCode::OPERATION_ABORTED));
             hotplugPromise_.reset();
         }
@@ -57,6 +60,7 @@ void USBHub::start(Promise::Pointer promise)
 
 void USBHub::cancel()
 {
+    LOG(debug);
     strand_.dispatch([this, self = this->shared_from_this()]() mutable {
         if(hotplugPromise_ != nullptr)
         {
@@ -76,6 +80,7 @@ void USBHub::cancel()
 
 int USBHub::hotplugEventsHandler(libusb_context* usbContext, libusb_device* device, libusb_hotplug_event event, void* userData)
 {
+    LOG(debug);
     if(event == LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED)
     {
         auto self = reinterpret_cast<USBHub*>(userData)->shared_from_this();
@@ -95,12 +100,14 @@ void USBHub::handleDevice(libusb_device* device)
 {
     if(hotplugPromise_ == nullptr)
     {
+        LOG(error) << "hotplugPromise is null";
         return;
     }
 
     libusb_device_descriptor deviceDescriptor;
     if(usbWrapper_.getDeviceDescriptor(device, deviceDescriptor) != 0)
     {
+        LOG(error) << "Cannot get device descriptor";
         return;
     }
 
@@ -109,11 +116,15 @@ void USBHub::handleDevice(libusb_device* device)
 
     if(openResult != 0)
     {
+        LOG(error) << "Cannot open usb device";
         return;
     }
 
+    LOG(debug) << "idVendor: " << deviceDescriptor.idVendor << ", idProduct: " << deviceDescriptor.idProduct;
+
     if(this->isAOAPDevice(deviceDescriptor))
     {
+        LOG(info) << "New AOAP device detected";
         hotplugPromise_->resolve(std::move(handle));
         hotplugPromise_.reset();
     }
