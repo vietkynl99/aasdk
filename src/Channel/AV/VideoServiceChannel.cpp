@@ -116,7 +116,7 @@ void VideoServiceChannel::messageHandler(messenger::Message::Pointer message, IV
         this->handleVideoFocusRequest(payload, std::move(eventHandler));
         break;
     default:
-        AASDK_LOG(error) << "[VideoServiceChannel] message not handled: " << messageId.getId();
+        LOG(error) << "message not handled: " << messageId.getId();
         this->receive(std::move(eventHandler));
         break;
     }

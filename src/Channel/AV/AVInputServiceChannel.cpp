@@ -89,7 +89,7 @@ void AVInputServiceChannel::messageHandler(messenger::Message::Pointer message, 
         this->handleChannelOpenRequest(payload, std::move(eventHandler));
         break;
     default:
-        AASDK_LOG(error) << "[AVInputServiceChannel] message not handled: " << messageId.getId();
+        LOG(error) << "message not handled: " << messageId.getId();
         this->receive(std::move(eventHandler));
         break;
     }

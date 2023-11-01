@@ -18,6 +18,13 @@
 
 #pragma once
 
+#include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
+#include <boost/log/expressions.hpp>
+#include <boost/log/utility/setup/console.hpp>
+#include <boost/log/utility/setup/common_attributes.hpp>
 
-#define AASDK_LOG(severity) BOOST_LOG_TRIVIAL(severity) << "[AaSdk] "
+#define ADDITIONAL_TAG "AASDK"
+
+#define LOG(severity) BOOST_LOG_TRIVIAL(severity) << "\t[" << gettid() << "][" ADDITIONAL_TAG "]["  << \
+                        __FILE_NAME__ << ":" << __LINE__ << "][" << __FUNCTION__ << "] "

@@ -41,7 +41,7 @@ NavigationStatusServiceChannel::NavigationStatusServiceChannel(boost::asio::io_s
 
 void NavigationStatusServiceChannel::receive(INavigationStatusServiceChannelEventHandler::Pointer eventHandler)
 {
-        AASDK_LOG(info) << "[NavigationStatusServiceChannel] receive ";
+        LOG(info) << "receive ";
 
     auto receivePromise = messenger::ReceivePromise::defer(strand_);
     receivePromise->then(std::bind(&NavigationStatusServiceChannel::messageHandler, this->shared_from_this(), std::placeholders::_1, eventHandler),
@@ -57,7 +57,7 @@ messenger::ChannelId NavigationStatusServiceChannel::getId() const
 
 void NavigationStatusServiceChannel::sendChannelOpenResponse(const proto::messages::ChannelOpenResponse& response, SendPromise::Pointer promise)
 {
-    AASDK_LOG(info) << "[NavigationStatusServiceChannel] channel open response ";
+    LOG(info) << "channel open response ";
 
     auto message(std::make_shared<messenger::Message>(channelId_, messenger::EncryptionType::ENCRYPTED, messenger::MessageType::CONTROL));
     message->insertPayload(messenger::MessageId(proto::ids::ControlMessage::CHANNEL_OPEN_RESPONSE).getData());
@@ -69,7 +69,7 @@ void NavigationStatusServiceChannel::sendChannelOpenResponse(const proto::messag
 
 void NavigationStatusServiceChannel::messageHandler(messenger::Message::Pointer message, INavigationStatusServiceChannelEventHandler::Pointer eventHandler)
 {
-        AASDK_LOG(info) << "[NavigationStatusServiceChannel] message handler ";
+        LOG(info) << "message handler ";
 
     messenger::MessageId messageId(message->getPayload());
     common::DataConstBuffer payload(message->getPayload(), messageId.getSizeOf());
@@ -91,7 +91,7 @@ void NavigationStatusServiceChannel::messageHandler(messenger::Message::Pointer 
 
     
     default:
-        AASDK_LOG(error) << "[NavigationStatusServiceChannel] message not handled: " << messageId.getId() << " : " << dump(payload);
+        LOG(error) << "message not handled: " << messageId.getId() << " : " << dump(payload);
         this->receive(std::move(eventHandler));
         break;
     }
@@ -99,7 +99,7 @@ void NavigationStatusServiceChannel::messageHandler(messenger::Message::Pointer 
 
 void NavigationStatusServiceChannel::handleChannelOpenRequest(const common::DataConstBuffer& payload, INavigationStatusServiceChannelEventHandler::Pointer eventHandler)
 {
-        AASDK_LOG(info) << "[NavigationStatusServiceChannel] channel open request ";
+        LOG(info) << "channel open request ";
 
     proto::messages::ChannelOpenRequest request;
     if(request.ParseFromArray(payload.cdata, payload.size))
@@ -122,7 +122,7 @@ void NavigationStatusServiceChannel::handleStatusUpdate(const common::DataConstB
     else
     {
         eventHandler->onChannelError(error::Error(error::ErrorCode::PARSE_PAYLOAD));
-        AASDK_LOG(error) << "[NavigationStatusServiceChannel] encountered error with message: " << dump(payload);
+        LOG(error) << "encountered error with message: " << dump(payload);
     }
 
 }
@@ -137,7 +137,7 @@ void NavigationStatusServiceChannel::handleTurnEvent(const common::DataConstBuff
     else
     {
         eventHandler->onChannelError(error::Error(error::ErrorCode::PARSE_PAYLOAD));
-        AASDK_LOG(error) << "[NavigationStatusServiceChannel] encountered error with message: " << dump(payload);
+        LOG(error) << "encountered error with message: " << dump(payload);
     }
 
 }
@@ -152,7 +152,7 @@ void NavigationStatusServiceChannel::handleDistanceEvent(const common::DataConst
     else
     {
         eventHandler->onChannelError(error::Error(error::ErrorCode::PARSE_PAYLOAD));
-        AASDK_LOG(error) << "[NavigationStatusServiceChannel] encountered error with message: " << dump(payload);
+        LOG(error) << "encountered error with message: " << dump(payload);
     }
 
 }

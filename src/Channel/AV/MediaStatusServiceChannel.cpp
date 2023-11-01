@@ -56,7 +56,7 @@ messenger::ChannelId MediaStatusServiceChannel::getId() const
 
 void MediaStatusServiceChannel::sendChannelOpenResponse(const proto::messages::ChannelOpenResponse& response, SendPromise::Pointer promise)
 {
-    AASDK_LOG(info) << "[MediaStatusServiceChannel] channel open response ";
+    LOG(info) << "channel open response ";
     auto message(std::make_shared<messenger::Message>(channelId_, messenger::EncryptionType::ENCRYPTED, messenger::MessageType::CONTROL));
     message->insertPayload(messenger::MessageId(proto::ids::ControlMessage::CHANNEL_OPEN_RESPONSE).getData());
     message->insertPayload(response);
@@ -85,7 +85,7 @@ void MediaStatusServiceChannel::messageHandler(messenger::Message::Pointer messa
         break;
 
     default:
-        AASDK_LOG(error) << "[MediaStatusServiceChannel] message not handled: " << messageId.getId() << " : " << dump(payload);
+        LOG(error) << "message not handled: " << messageId.getId() << " : " << dump(payload);
         this->receive(std::move(eventHandler));
         break;
     }
@@ -104,7 +104,7 @@ void MediaStatusServiceChannel::handleMetadataUpdate(const common::DataConstBuff
     else
     {
         eventHandler->onChannelError(error::Error(error::ErrorCode::PARSE_PAYLOAD));
-        AASDK_LOG(error) << "[MediaStatusServiceChannel] encountered error with message: " << dump(payload);
+        LOG(error) << "encountered error with message: " << dump(payload);
     }
 
 }
@@ -120,14 +120,14 @@ void MediaStatusServiceChannel::handlePlaybackUpdate(const common::DataConstBuff
     else
     {
         eventHandler->onChannelError(error::Error(error::ErrorCode::PARSE_PAYLOAD));
-        AASDK_LOG(error) << "[MediaStatusServiceChannel] encountered error with message: " << dump(payload);
+        LOG(error) << "encountered error with message: " << dump(payload);
     }
 
 }
 
 void MediaStatusServiceChannel::handleChannelOpenRequest(const common::DataConstBuffer& payload, IMediaStatusServiceChannelEventHandler::Pointer eventHandler)
 {
-    AASDK_LOG(info) << "[MediaStatusServiceChannel] channel open request ";
+    LOG(info) << "channel open request ";
 
     proto::messages::ChannelOpenRequest request;
     if(request.ParseFromArray(payload.cdata, payload.size))

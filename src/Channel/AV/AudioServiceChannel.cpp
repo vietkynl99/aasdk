@@ -103,7 +103,7 @@ void AudioServiceChannel::messageHandler(messenger::Message::Pointer message, IA
         this->handleChannelOpenRequest(payload, std::move(eventHandler));
         break;
     default:
-        AASDK_LOG(error) << "[AudioServiceChannel] message not handled: " << messageId.getId();
+        LOG(error) << "message not handled: " << messageId.getId();
         this->receive(std::move(eventHandler));
         break;
     }

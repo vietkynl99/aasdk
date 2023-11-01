@@ -74,7 +74,7 @@ void SensorServiceChannel::messageHandler(messenger::Message::Pointer message, I
         this->handleChannelOpenRequest(payload, std::move(eventHandler));
         break;
     default:
-        AASDK_LOG(error) << "[SensorServiceChannel] message not handled: " << messageId.getId();
+        LOG(error) << "message not handled: " << messageId.getId();
         this->receive(std::move(eventHandler));
         break;
     }
