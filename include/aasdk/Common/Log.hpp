@@ -27,4 +27,4 @@
 #define ADDITIONAL_TAG "AASDK"
 
 #define LOG(severity) BOOST_LOG_TRIVIAL(severity) << "\t[" << gettid() << "][" ADDITIONAL_TAG "]["  << \
-                        __FILE_NAME__ << ":" << __LINE__ << "][" << __FUNCTION__ << "] "
+                        __FILE__ << ":" << __LINE__ << "][" << __FUNCTION__ << "] "
